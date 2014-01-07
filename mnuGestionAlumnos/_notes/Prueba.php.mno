@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Recordset1" value="name:Codigo;datatype:int,name:NombreCentro;datatype:string,name:Direccion;datatype:string,name:Poblacion;datatype:string,name:Provincia;datatype:string,name:Telefono;datatype:string,name:email;datatype:string,name:NIF_Presentador;datatype:string,name:Nombre_Presentador;datatype:string,name:Sufijo_Presentador;datatype:string,name:Entidad_Presentador;datatype:string,name:Oficina_Presentador;datatype:string,name:NIF_Ordenante;datatype:string,name:Nombre_Ordenante;datatype:string,name:Sufijo_Ordenante;datatype:string,name:Entidad_Ordenante;datatype:string,name:Oficina_Ordenante;datatype:string,name:DC_Ordenante;datatype:string,name:N_Cuenta_Ordenante;datatype:string" />
+</info>

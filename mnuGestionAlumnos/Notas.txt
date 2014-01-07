@@ -1,0 +1,2 @@
+* Modificar alumno  -> modificarlo para que no sea necesario usar Sesiones ni cookies
+* Como se uso el apartado 1º recibo

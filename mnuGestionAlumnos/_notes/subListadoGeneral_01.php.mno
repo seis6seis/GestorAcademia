@@ -1,0 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<info>
+	<infoitem key="UD_Recordset1" value="name:Codi;datatype:string,name:Reserva;datatype:string,name:Fecha_Al;datatype:date,name:Fecha_Co;datatype:date,name:Fecha_Ba;datatype:date,name:Nombre_Alumno;datatype:string,name:Direccion;datatype:string,name:Ciudad;datatype:string,name:Codigo_Postal;datatype:int,name:Telefono;datatype:string,name:Movil;datatype:string,name:Pago;datatype:string,name:Grupo;datatype:string,name:Materiales;datatype:int,name:Descuento;datatype:int,name:Motivo_Dto;datatype:string,name:Procedencia;datatype:string,name:Profesion_Estudios;datatype:string,name:Necesidad;datatype:string,name:Edad;datatype:string,name:IDColegio;datatype:string,name:Correo;datatype:string,name:Cambios;datatype:string,name:Observaciones;datatype:string" />
+</info>
