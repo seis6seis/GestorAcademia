@@ -149,23 +149,23 @@ Sigma.Util.onLoad(Sigma.Grid.render(mygrid));
 // Para el segundo Grid (Recibos Cobrados
 var dsOption2= {
     fields :[
-      {name : 'ID'},
-			{name : 'Codi'},
-      {name : 'Parcial'},
-      {name : 'Gram_y_Voc'},
-      {name : 'E_Oral'},
-      {name : 'E_Escrita'},
-      {name : 'Compresion'},
-      {name : 'Reading'},
-      {name : 'Global'},
-			{name : 'N_Faltas'},
-			{name : 'Observaciones'}
+		{name : 'ID'},
+		{name : 'Codi'},
+		{name : 'Parcial'},
+		{name : 'Gram_y_Voc'},
+		{name : 'E_Oral'},
+		{name : 'E_Escrita'},
+		{name : 'Compresion'},
+		{name : 'Reading'},
+		{name : 'Global'},
+		{name : 'N_Faltas'},
+		{name : 'Observaciones'}
     ],
     recordType : 'object'
 } 
 
 var colsOption2 = [
-	{id : "ID", header : " ", width :1},
+	{id : "ID", header : "-", width :5},
 	{id : "Codi" , header: "Codi" , width :75},
 	{id : "Parcial" , header: "Parcial" , width :50, align : 'center', editor:{type:'select', options:{'1': '1','2': '2','3': '3'}}},
 	{id : "Gram_y_Voc" , header: "Gram. y Voc." , width: 80, align : 'center', editor:{type:'select', options:{'NP':'NP', 'INSUFICIENTE': 'INSUFICIENTE','SUFICIENTE': 'SUFICIENTE','BIEN': 'BIEN','NOTABLE': 'NOTABLE','SOBRESALIENTE': 'SOBRESALIENTE'}}},

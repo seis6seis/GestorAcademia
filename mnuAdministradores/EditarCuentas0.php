@@ -62,11 +62,13 @@ var gridOption={
 	resizable : true,
 	loadURL : "BD/BDCuentas.php",
 	saveURL : "BD/BDCuentas.php",
+	exportURL : 'BD/BDCuentas.php?export=true',
+	exportFileName : 'Cuentas',
 	container : 'gridbox',
 	dataset : dsOption ,
 	columns : colsOption,
 	toolbarPosition : 'top',
-	toolbarContent : 'btnrefresh <?php if($_GET['Codigo']!="") echo "| btnadd btndel btnsave "; ?>| filter | print',
+	toolbarContent : 'btnrefresh <?php if($_GET['Codigo']!="") echo "| btnadd btndel btnsave "; ?>| filter | print xls',
 	pageSize : 50000
 };
 var mygrid=new Sigma.Grid(gridOption);

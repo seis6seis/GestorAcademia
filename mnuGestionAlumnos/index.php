@@ -238,7 +238,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 							$miconexion_Centro = new DB_mysql;
 							$miconexion_Centro->conectar();
 							echo "<select name='cmbCentros' id='cmbCentros' onchange=\"MM_jumpMenu('parent',this,0)\" tabindex='0'>\n";
-							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY Codigo ASC";
+							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY NombreCentro ASC";
 							$miconexion_Centro->consulta($sql);
 							while ($row =mysql_fetch_array($miconexion_Centro->Consulta_ID)) {
 								echo "<option value='../CambioCentroAdmin.php?Centro=".$row['Codigo']."' id='formulario'";
@@ -254,8 +254,11 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 ?>
             <b>Curso:</b>&nbsp;
 						<select name='cmbCursoEscolar' id='cmbCursoEscolar' onchange="MM_jumpMenu('parent',this,0)" tabindex='1'>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Actual' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso Actual</option>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Proximo' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso Proximo</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=1' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso 1</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=2' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso 2</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=3' id='formulario' <?php if ($_SESSION['CursoEscolar']=="3"){ echo " selected"; } ?> >Curso 3</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=4' id='formulario' <?php if ($_SESSION['CursoEscolar']=="4"){ echo " selected"; } ?> >Curso 4</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=5' id='formulario' <?php if ($_SESSION['CursoEscolar']=="5"){ echo " selected"; } ?> >Curso 5</option>
             </select>
           	</font>
           </div>
@@ -323,10 +326,11 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 				<div id='SubMenu' style="width:130px;">
 					<p><a href="BuscarAlumno0.php" target="_blank">Buscar Alumno</a></p>
 					<p><a href='subListadoGeneral_01.php' target='_blank'>Listado General</a></p>
-                    <p><a href="#" onclick="popup('Informacion0.php', 800,400,'no')">Informacion</a></p>
+					<p><a href="#" onclick="popup('Informacion0.php', 800,400,'no')">Informacion</a></p>
                     <p><a href="#" onclick="popup('DarBaja0.php', 500, 350,'no')">Registros de Bajas</a></p>          
-                     <p><a href="#" onclick="popup('ListadoBajas0.php', 800,460,'no')">Listado de Bajas</a></p>
-                     <p><a href="#" onclick="popup('ListadoAltas0.php', 800,460,'no')">Listado de Altas</a></p>
+                    <p><a href="#" onclick="popup('ListadoBajas0.php', 800,460,'no')">Listado de Bajas</a></p>
+                    <p><a href="#" onclick="popup('ListadoAltas0.php', 800,460,'no')">Listado de Altas</a></p>
+                    <p><a href='RelacionGrupos0.php' target='_blank'>Relacción de Grupos</a></p>
                     <p><a href="ListadoGrupos0.php" target="_blank">Listado de Grupos</a></p>          
                     <p><a href="#" onclick="popup('Contrato0.php?Codigo=<?php echo $_SESSION['Centro'] ?>'+mygrid.getColumnValue('Codi',gridRow),800,400,'yes')">Contratos</a></p>
                     <p><a href="#" onclick="popup('Cuadrante0.php',800,400,'yes')">Ver Cuadrante</a></p>
@@ -398,8 +402,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
               <td colspan="2" align="center" valign="middle" bgcolor="#999999">
               	<strong>
                 	<a href="#" onclick="popup('DatosBanco0.php?Alumno=<?php echo $_SESSION['Centro'] ?>'+mygrid.getColumnValue('Codi',gridRow)+'&Centro=<?php echo $_SESSION['Centro']?>', 800,270,'no')">Añadir datos de banco</a>
-								</strong>
-							</td>
+				</strong>
+			  </td>
               <td align="center" valign="middle">&nbsp;</td>
               <td align="center" valign="middle">&nbsp;</td>
               <td>&nbsp;</td>

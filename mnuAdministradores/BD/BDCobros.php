@@ -6,6 +6,34 @@ mysql_select_db("gestoracademia".$_SESSION['CursoEscolar']) or die("Could not se
 mysql_query ("SET NAMES 'utf8'");
 $json=json_decode(stripslashes($_POST["_gt_json"]));
 require ("../../Connections/funciones.php");
+//This is sigma grid exporting handler 
+require_once('../../grid/GridServerHandler.php');
+$type = getParameter('exportType');
+
+if ( $type == 'xls' ){
+	$sql = "SELECT * FROM Cobros WHERE Centro='".$_SESSION['SQL']."'";
+	$handle = mysql_query($sql);    
+	$salida_cvs='"idCobro", "Cod", "Fecha_Ge", "Fecha_De", "Importe", "Matricula", "Dto", "Cuota", "Materiales", "Periodo", "Pagado", "Metalico", "Centro"'."\n";
+	while ($row = mysql_fetch_object($handle)) {
+		$salida_cvs=$salida_cvs.'"'.$row->idCobro.'", "'.$row->Cod.'", "'.cambiarfecha($row->Fecha_Ge).'", '.
+				'"'.cambiarfecha($row->Fecha_De).'", '.
+				'"'.str_replace(".", ",", $row->Importe).'", '.
+				'"'.str_replace(".", ",", $row->Matricula).'", '.
+				'"'.str_replace(".", ",", $row->Dto).'", '.
+				'"'.str_replace(".", ",", $row->Cuota).'", '.
+				'"'.str_replace(".", ",", $row->Materiales).'", '.
+				'"'.$row->Periodo.'", '.
+				'"'.$row->Pagado.'", "'.$row->Metalico.'", "'.$row->Centro.'"'."\n";
+	}
+	//Adapta la BBDD que esta en UTF-8 a Windows ISO-8859
+	$salida_cvs=iconv ( "UTF-8", "ISO-8859-1", $salida_cvs);
+
+	//Exporta el fichero resultado
+	header("Content-type: application/vnd.ms-excel");
+	header("Content-disposition: filename=Cobros.csv");
+	print $salida_cvs;
+	exit;
+}
 
 if($json->{'action'} == 'load'){
 	//pageno starts with 1 instead of 0

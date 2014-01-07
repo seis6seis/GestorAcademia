@@ -21,8 +21,7 @@ class DB_mysql {
 	/* Método Constructor: Cada vez que creemos una variable de esta clase, se ejecutará esta función */
 	//function DB_mysql($bd = "gestoracademia", $host = "hostingmysql56.amen.es", $user = "803689_Gestor", $pass = "Nj64sG6eDY5mUhaf") {
 		
-//	function DB_mysql($bd = "gestoracademia", $host = "localhost", $user = "root", $pass = "pedroman") {
-	function DB_mysql($bd = "gestoracademia", $host = "localhost", $user = "root", $pass = "0707") {
+	function DB_mysql($bd = "gestoracademia", $host = "localhost", $user = "root", $pass = "pedroman") {
 		$this->BaseDatos = $bd.$_SESSION['CursoEscolar'];
 		$this->Servidor = $host;
 		$this->Usuario = $user;

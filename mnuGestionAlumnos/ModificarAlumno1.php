@@ -53,11 +53,11 @@
 		}else{
 			$Dto='NO';
 		}
-		$sql="UPDATE Alumnos SET Reserva='".$_POST['Reserva']."', Fecha_Al='".cambiarfecha($_POST['FecAlta'])."', Fecha_Co='".cambiarfecha($_POST['FecCom'])."', Fecha_Ba='".cambiarfecha($_POST['FecBaja'])."', Nombre_Alumno='".$_POST['NomAlumno']."', Direccion='".$_POST['Direccion']."', Ciudad='".$_POST['Ciudad']."', Codigo_Postal='".$_POST['CP']."', Telefono='".$_POST['Tlf']."', Movil='".$_POST['Movil']."', Pago='".$_POST['Pago']."', Grupo='".$_POST['Grupo']."', Materiales='".$Material."', Descuento='".$Dto."', Motivo_Dto='".$_POST['MotivoDto']."', Procedencia='".$_POST['Procedencia']."', Profesion_Estudios='".$_POST['Profesion']."', Necesidad='".$_POST['Necesidad']."', Edad='".$_POST['Ano']."', IDColegio='".$_POST['IDColegio']."', Correo='".$_POST['Correo']."', Cambios='".$_POST['Cambios']."', Observaciones='".$_POST['Observaciones']."' WHERE Codi='".$_POST['txtCentro'].$_POST['Codigo']."'";
+		$sql="UPDATE alumnos SET Reserva='".$_POST['Reserva']."', Fecha_Al='".cambiarfecha($_POST['FecAlta'])."', Fecha_Co='".cambiarfecha($_POST['FecCom'])."', Fecha_Ba='".cambiarfecha($_POST['FecBaja'])."', Nombre_Alumno='".$_POST['NomAlumno']."', Direccion='".$_POST['Direccion']."', Ciudad='".$_POST['Ciudad']."', Codigo_Postal='".$_POST['CP']."', Telefono='".$_POST['Tlf']."', Movil='".$_POST['Movil']."', Pago='".$_POST['Pago']."', Grupo='".$_POST['Grupo']."', Materiales='".$Material."', Descuento='".$Dto."', Motivo_Dto='".$_POST['MotivoDto']."', Procedencia='".$_POST['Procedencia']."', Profesion_Estudios='".$_POST['Profesion']."', Necesidad='".$_POST['Necesidad']."', Edad='".$_POST['Ano']."', IDColegio='".$_POST['IDColegio']."', Correo='".$_POST['Correo']."', Cambios='".$_POST['Cambios']."', Observaciones='".$_POST['Observaciones']."' WHERE Codi='".$_POST['txtCentro'].$_POST['Codigo']."'";
 		$miconexion->consulta($sql);
-		if (!empty($miconexion->$Error)){
+		if (!empty($miconexion->Error)){
 			echo $miconexion->Error."<br />";
-			echo $sql;
+
 		}
 		else {
 			echo "<br /><br /><br />\n";

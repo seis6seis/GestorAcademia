@@ -20,7 +20,26 @@
 function popup(mylink, w, h,scrollbar){
 	window.open(mylink, "", "directories=no, menubar =no,status=no,toolbar=no,location=no,scrollbars="+scrollbar+",fullscreen=no,top=10,left=10,height="+h+",width="+w)
 }
-</script>
+
+		function validar_form(){
+      if (document.formulario.Codigo.value.length==0){
+        alert("Tiene que escribir el Codigo del alumno")
+        document.formulario.Codigo.focus()
+        return 0; 
+      }
+      if (document.formulario.Grupo.selectedIndex==0){
+        alert("Tiene que escoger su Grupo")
+        document.formulario.Grupo.focus()
+        return 0; 
+      }
+      if (document.formulario.NomAlumno.value.length==0){
+        alert("Tiene que escribir el Nombre del Alumno")
+        document.formulario.NomAlumno.focus()
+        return 0; 
+      }
+			document.formulario.submit(); 
+    }
+  </script>
 <!-- InstanceEndEditable -->
 <style type="text/css">
 <!--
@@ -50,7 +69,7 @@ function popup(mylink, w, h,scrollbar){
 		$miconexion2 = new DB_mysql;
 		$miconexion2->conectar();
 ?>
-  <form id="formulario" name="form1" method="post" action="ModificarAlumno1.php">
+  <form id="formulario" name="formulario" method="post" action="ModificarAlumno1.php">
     <table width="770" border="0" align="center">
     <tr>
       <td width="63"><strong>Codigo:</strong></td>
@@ -89,14 +108,14 @@ function popup(mylink, w, h,scrollbar){
       <td><label>
       <select name="Pago" id="Pago" tabindex="12">
         <option  class='formulario'>----</option>
-        <option value="AN_B" <?php if($row['Pago']=='AN_B') echo "selected='selected'" ?> >AN_B</option>
-        <option value="AN_M" <?php if($row['Pago']=='AN_M') echo "selected='selected'" ?> >AN_M</option>
-        <option value="CU_B" <?php if($row['Pago']=='CU_B') echo "selected='selected'" ?> >CU_B</option>
-        <option value="CU_M" <?php if($row['Pago']=='CU_M') echo "selected='selected'" ?> >CU_M</option>
-        <option value="ME_B" <?php if($row['Pago']=='ME_B') echo "selected='selected'" ?> >ME_B</option>
-        <option value="ME_M" <?php if($row['Pago']=='ME_M') echo "selected='selected'" ?> >ME_M</option>
-        <option value="TR_B" <?php if($row['Pago']=='TR_B') echo "selected='selected'" ?> >TR_B</option>
-        <option value="TR_M" <?php if($row['Pago']=='TR_M') echo "selected='selected'" ?> >TR_M</option>
+        <option value="AN_B" <?php if($row['Pago']=='AN_B') echo "selected='selected'" ?> >Anual Banco</option>
+        <option value="AN_M" <?php if($row['Pago']=='AN_M') echo "selected='selected'" ?> >Anual Metalico</option>
+        <option value="QU_B" <?php if($row['Pago']=='QU_B') echo "selected='selected'" ?> >Quintimestral Banco</option>
+        <option value="QU_M" <?php if($row['Pago']=='QU_M') echo "selected='selected'" ?> >Quintimestral Metalico</option>
+        <option value="ME_B" <?php if($row['Pago']=='ME_B') echo "selected='selected'" ?> >Mensual Banco</option>
+        <option value="ME_M" <?php if($row['Pago']=='ME_M') echo "selected='selected'" ?> >Mensual Metalico</option>
+        <option value="TR_B" <?php if($row['Pago']=='TR_B') echo "selected='selected'" ?> >Trimestre Banco</option>
+        <option value="TR_M" <?php if($row['Pago']=='TR_M') echo "selected='selected'" ?> >Trimestre Metalico</option>
         <option value="FIN" <?php if($row['Pago']=='FIN') echo "selected='selected'" ?> >FIN</option>
        </select>
       </label></td>
@@ -144,13 +163,10 @@ function popup(mylink, w, h,scrollbar){
       <td width="166"><label>
         <select name="Procedencia" id="Procedencia" tabindex="17">
         	<option class='formulario'>----</option>
-          <option value="AC" <?php if($row['Procedencia']=='AC') echo "selected='selected'" ?> >Alumno del Centro</option>
           <option value="FA" <?php if($row['Procedencia']=='FA') echo "selected='selected'" ?> >Fachada</option>
-          <option value="IA" <?php if($row['Procedencia']=='IA') echo "selected='selected'" ?> >Paginas Amarillas</option>
-          <option value="IG" <?php if($row['Procedencia']=='IG') echo "selected='selected'" ?> >Google</option>
-          <option value="IL" <?php if($row['Procedencia']=='IL') echo "selected='selected'" ?> >Internet Local </option>
-          <option value="PP" <?php if($row['Procedencia']=='PP') echo "selected='selected'" ?> >Papel, Carteles, Buzon</option>
           <option value="RF" <?php if($row['Procedencia']=='RF') echo "selected='selected'" ?> >Referencias</option>
+          <option value="IL" <?php if($row['Procedencia']=='IL') echo "selected='selected'" ?> >Internet Local </option>
+          <option value="AZ" <?php if($row['Procedencia']=='AZ') echo "selected='selected'" ?> >Azafatas</option>
           <option value="OT" <?php if($row['Procedencia']=='OT') echo "selected='selected'" ?> >Otros</option>
         </select>
       </label></td>
@@ -210,7 +226,7 @@ function popup(mylink, w, h,scrollbar){
       <td colspan="6">
         <div align="center">
           <p>
-            <input type="submit" name="Modificar" id="formulario" value="Modificar" tabindex="25"/>
+            <input type="button" name="Modificar" id="formulario" value="Modificar" tabindex="25" onclick="validar_form()"/>
             &nbsp;&nbsp;
             <input type="reset" name="Restablecer" id="formulario" value="Restablecer"tabindex="26" /></p>
           <p align="left"><font color="#FF0000" size="+2">*</font><font color="#FF0000"> Poner - entre la fecha. Ejm &quot;27-01-2010&quot;</font></p>

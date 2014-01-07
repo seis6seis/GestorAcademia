@@ -20,12 +20,25 @@ function popup(mylink, w, h,scrollbar){
 	window.open(mylink, "", "directories=no, menubar =no,status=no,toolbar=no,location=no,scrollbars="+scrollbar+",fullscreen=no,top=10,left=10,height="+h+",width="+w)
 }
 
-function Valida( formulario ) {
-  if (formulario.Codigo.value == '') {
-  	alert("Es necesario rellenar el campo Codigo.");
-    return false
-  }
-} 
+    function validar_form(){
+      if (document.formulario.Codigo.value.length==0){
+        alert("Tiene que escribir el Codigo del alumno")
+        document.formulario.Codigo.focus()
+        return 0; 
+      }
+      if (document.formulario.Grupo.selectedIndex==0){
+        alert("Tiene que escoger su Grupo")
+        document.formulario.Grupo.focus()
+        return 0; 
+      }
+      if (document.formulario.NomAlumno.value.length==0){
+        alert("Tiene que escribir el Nombre del Alumno")
+        document.formulario.NomAlumno.focus()
+        return 0; 
+      }
+
+      document.formulario.submit(); 
+    }
 </script>
 <!-- InstanceEndEditable -->
 <style type="text/css">
@@ -48,7 +61,7 @@ function Valida( formulario ) {
   </table>
 	<!-- InstanceBeginEditable name="Codigo" -->
   <hr />
-  <form id="formulario" name="form1" method="post" action="NuevoAlumno1.php" onSubmit="return Valida(this);">
+  <form id="formulario" name="formulario" method="post" action="NuevoAlumno1.php">
   <table width="770" border="0" align="center">
     <tr>
       <td width="63"><strong>Codigo:</strong></td>
@@ -86,14 +99,14 @@ function Valida( formulario ) {
       <td><label>
       <select name="Pago" id="Pago" tabindex="12">
         <option>----</option>
-        <option value="AN_B">AN_B</option>
-        <option value="AN_M">AN_M</option>
-        <option value="CU_B">CU_B</option>
-        <option value="CU_M">CU_M</option>
-        <option value="ME_B">ME_B</option>
-        <option value="ME_M">ME_M</option>
-        <option value="TR_B">TR_B</option>
-        <option value="TR_M">TR_M</option>
+        <option value="AN_B">Anual Banco</option>
+        <option value="AN_M">Anual Metalico</option>
+        <option value="QU_B">Quintimestral Banco</option>
+        <option value="QU_M">Quintimestral Metalico</option>
+        <option value="ME_B">Mensual Banco</option>
+        <option value="ME_M">Mensual Metalico</option>
+        <option value="TR_B">Trimestre Banco</option>
+        <option value="TR_M">Trimestre Metalico</option>
         <option value="FIN">FIN</option>
        </select>
       </label></td>
@@ -137,13 +150,10 @@ function Valida( formulario ) {
       <td width="166"><label>
         <select name="Procedencia" id="Procedencia" tabindex="17">
         	<option value='----' class='formulario'>----</option>
-          <option value="AC">Alumno del Centro</option>
           <option value="FA">Fachada</option>
-          <option value="IA">Paginas Amarillas</option>
-          <option value="IG">Google</option>
-          <option value="IL">Internet Local </option>
-          <option value="PP">Papel, Carteles, Buzon</option>
           <option value="RF">Referencias</option>
+          <option value="IL">Internet</option>
+          <option value="AZ">Azafatas</option>          
           <option value="OT">Otros</option>
         </select>
       </label></td>
@@ -199,7 +209,7 @@ function Valida( formulario ) {
       <td colspan="6">
         <div align="center">
           <p align="center">
-            <input type="submit" name="Añadir" id="formulario" value="Añadir" tabindex="25"/>
+            <input type="button" name="Añadir" id="formulario" value="Añadir" tabindex="25" onclick="validar_form()"/>
             &nbsp;&nbsp;
             <input type="reset" name="Restablecer" id="formulario" value="Restablecer"tabindex="26" />
           </p>

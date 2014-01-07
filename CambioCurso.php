@@ -10,11 +10,11 @@
 
 <body>
 <?php
-	if ($_GET['Curso']=="Actual"){
-		$_SESSION['CursoEscolar']="";
-	}
-	if ($_GET['Curso']=="Proximo"){
-		$_SESSION['CursoEscolar']="2";
+	if ($_GET['Curso']!=""){
+		if ($_GET['Curso']=="1")
+			$_SESSION['CursoEscolar']="";
+		else
+			$_SESSION['CursoEscolar']=$_GET['Curso']-1;
 	}
 ?>
 <script>

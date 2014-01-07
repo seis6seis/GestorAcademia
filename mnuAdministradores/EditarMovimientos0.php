@@ -95,11 +95,13 @@ var gridOption={
 	resizable : true,
 	loadURL : "BD/BDMovimientos.php",
 	saveURL : "BD/BDMovimientos.php",
+	exportURL : 'BD/BDMovimientos.php?export=true',
+	exportFileName : 'MovimientosCuentas',
 	container : 'gridbox',
 	dataset : dsOption ,
 	columns : colsOption,
 	toolbarPosition : 'top',
-	toolbarContent : 'btnrefresh | btndel btnsave | filter | print',
+	toolbarContent : 'btnrefresh | btndel btnsave | filter | print xls',
 	pageSize : 50000
 };
 var mygrid=new Sigma.Grid(gridOption);

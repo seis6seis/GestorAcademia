@@ -21,18 +21,99 @@
   <!-- InstanceBeginEditable name="doctitle" -->
   <title>Gestor Academia</title>
   <!-- InstanceEndEditable -->
-<link href="/GestorAcademia/CSS/Estilo.css" rel="stylesheet" type="text/css" />
+<link href="../CSS/Estilo.css" rel="stylesheet" type="text/css" />
 <!-- InstanceBeginEditable name="head" -->
 <link rel="stylesheet" type="text/css" href="../grid/gt_grid.css" />  
 <link rel="stylesheet" type="text/css" href="../grid/gt_grid_height.css" />
+<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="../grid/gt_msg_sp.js"></script>
 <script type="text/javascript" src="../grid/gt_const.js"></script>
 <script type="text/javascript" src="../grid/gt_grid_all.js"></script>
 <script type="text/javascript" src="../grid/flashchart/fusioncharts/FusionCharts.js"></script>
 <script type="text/javascript" src="../grid/calendar/calendar.js"></script>
 <script type="text/javascript" src="../grid/calendar/calendar-setup.js"></script>
-
+<!-- Quitar cuando HTML5 este al 100% -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="../lib/jquery-ui.js"></script>
 <script type="text/javascript">
+	$(function(){
+		$.datepicker.regional['es'] = {
+			closeText: 'Cerrar',
+			prevText: '<Ant',
+			nextText: 'Sig>',
+			currentText: 'Hoy',
+			monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+			dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+			dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+			dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+			weekHeader: 'Sm',
+			dateFormat: 'dd-mm-yy',
+			firstDay: 1,
+			isRTL: false,
+			showMonthAfterYear: false,
+			yearSuffix: ''
+		};
+		$.datepicker.setDefaults($.datepicker.regional['es']);
+		$('#txtFechaFalta').datepicker({
+			showButtonPanel: true,
+			onSelect: function (date) {
+				$("#txtFechaFalta").val(date);
+			}
+		});
+	});
+
+</script>
+<!-- Quitar cuando HTML5 este al 100% -->
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#btnGuardarFalta").click(function() {
+		if ($("#txtCodAlumnoFalta").val()!='' && $("#txtAlumnoFalta").val()!='' && $("#txtFechaFalta").val()!=''){
+			var fecha=$("#txtFechaFalta").val().split("-").reverse().join("-");
+			// *********** MODAL ********//
+			var maskHeight = $(document).height();
+			var maskWidth = $(window).width();
+			$('#mask').css({'width':maskWidth,'height':maskHeight});
+			$('#mask').fadeIn(1000);
+			$('#mask').fadeTo("slow",0.8);
+			var winH = $(window).height();
+			var winW = $(window).width();
+			$("#dialog").css('top', winH/2-$("#dialog").height()/2);
+			$("#dialog").css('left', winW/2-$("#dialog").width()/2);
+			$("#dialog").fadeIn(2000);
+			//*********** FIN DE MODAL *******//
+			var parametros = {
+				"action" : "save",
+				"CodAlumno" : $("#txtCodAlumnoFalta").val(),
+				"Fecha" : $("#txtFechaFalta").val(),
+				"Justificada" : $("#selJustificada").val()
+			};
+			var puntos=0;
+			$.ajax({
+				data: parametros,
+				url:   'BD/BDFaltas.php',
+				type:  'POST',
+				cache: false,
+				dataType : 'json',
+				success: function(msg){
+					if (msg.Res=='OK'){
+						$('#mask, .window').hide();
+						$("#txtCodAlumnoFalta").val("");
+						$("#txtAlumnoFalta").val("");
+						$("#txtFechaFalta").val("");
+						$('#selJustificada').val("NO");
+					}else{
+						$('#mask, .window').hide();
+						alert(msg.Res);
+					}
+				},
+				error: function(msg) { 
+					console.log("Error: " + msg.Res); 
+				}
+			});
+		}
+	});
+});
 function popup(mylink, w, h,scrollbar){
 	window.open(mylink, "", "directories=no, menubar =no,status=no,toolbar=no,location=no,scrollbars="+scrollbar+",fullscreen=no,top=10,left=10,height="+h+",width="+w)
 }
@@ -68,10 +149,10 @@ var colsOption = [
 
 var gridOption={
 	id : "mygrid1",
-	width: "100%",
-	height: "200",
+	width: "500px",
+	height: "200px",
 	replaceContainer : false,
-	resizable : true,
+	resizable : false,
 	loadURL : "BD/BDAlumnos.php",
 	container : 'gridbox',
 	dataset : dsOption ,
@@ -80,13 +161,33 @@ var gridOption={
 	toolbarContent : 'btnrefresh | state | filter | print',
 	pageSize : 50000,
 	onClickCell  : function(value, record , cell, row,  colNO, rowNO,columnObj,grid){
+		$("#NumFaltas").html("<font>&nbsp;</font>");
+		$.ajax({
+			data: {"action": "TotalFaltas", "Codigo": record['Codi']},
+			url:   'BD/BDFaltas.php',
+			type:  'POST',
+			cache: false,
+			dataType : 'json',
+			success: function(msg){
+				if (msg.Res=='OK'){
+					if (msg.Total>0)
+						$("#NumFaltas").html("<font color='#ff0000'>Tiene `"+msg.Total+"` faltas en la ultima semana.</font>");
+				}else{
+					alert(msg.Res);
+				}
+			},
+			error: function(msg) { 
+				console.log("Error: " + msg.Res); 
+			}
+		});
+		var d=new Date();
 		rowSelec=rowNO;
 		colSelec=colNO;
 		FiltroBool=-1;
     	CodigoSelec=record['Codi'];
-		var grid=Sigma.$grid("gridbox2");
-		grid.loadURL = "BD/BDFaltas.php";
-		grid.reload();
+    	$("#txtCodAlumnoFalta").val(record['Codi']);
+    	$("#txtAlumnoFalta").val(record['Nombre_Alumno']);
+    	$("#txtFechaFalta").val(d.getDate()+'-'+(d.getMonth()+1)+'-'+d.getFullYear());
 	}
 };
 var FiltroBool=-1;
@@ -155,82 +256,24 @@ Sigma.ToolFactroy.register(
 	}
 );
 
-var dsOption2= {
-    fields :[
-			{name : 'Codigo'},
-      {name : 'Fecha_Falta'},
-      {name : 'Fecha_Contacto'},
-			{name : 'Justificada'}, 
-      {name : 'Centro'},
-			{name : 'idFalta'}
-    ],
-    recordType : 'object'
-} 
-
-var colsOption2 = [
-	{id : "Codigo" , header: "Codigo" , width :75, editor:{type:"text"}},
-	{id : "Fecha_Falta" , header: "Fecha_Falta" , width :100, editor:{type:"text"}},
-	{id : "Fecha_Contacto" , header: "Fecha_Contacto" , width: 100},
-	{id : "Justificada", header: "Justificada", width: 100, editor: { type :"select" ,options : {'YES': 'YES' ,'NO':'NO'} ,defaultText : 'NO'}},
-	{id : "Centro" , header: " " , width :1, align : 'center'},
-	{id : "idFalta", header : " ", width :1}
-	
-];
-
-var gridOption2={
-	id : "gridbox2",
-	width: "99%",
-	height: "200",
-	replaceContainer : false,
-	resizable : true,
-	loadURL : "BD/BDFaltas.php",
-	saveURL : 'BD/BDFaltas.php',
-	container : 'gridbox2',
-	dataset : dsOption2 ,
-	columns : colsOption2,
-	toolbarPosition : 'top',
-	pageSize : 50000,
-	toolbarContent : 'btnrefresh | state | btnadd btndel btnsave | filter | print',
-	onComplete:function(grid){
-		if(FiltroBool==-1) {
-			Filtro(CodigoSelec);
-			FiltroBool=0;
-		}
-	},
-	onClickCell:function(value, record , cell, row,  colNO, rowNO,columnObj,grid){
-		if (CodigoSelec!='-' && record['Codigo']=='' && (colNO==0 || colNO==1)){
-			record['Codigo']=CodigoSelec;
-			record['Fecha_Falta']=document.form.txtFechaActual.value;
-			grid.save();
-			FiltroBool==-1;
-		}
-	}
-};
-var FiltroBool=-1;
-var mygrid2=new Sigma.Grid(gridOption2);
-Sigma.Util.onLoad(Sigma.Grid.render(mygrid2));
 
 var dsOption3= {
     fields :[
-			{name : 'idClase'},
-			{name : 'idCodigo'},
-      {name : 'Fecha'},
-      {name : 'ActividadesRealizadas'},
-      {name : 'TipoDeberes'},
-      {name : 'DescripcionDeberes'},
-      {name : 'Observaciones'}
+		{name : 'idGrupo'},
+		{name : 'Fecha'},
+		{name : 'DescripcionDeberes'}
     ],
     recordType : 'object'
 } 
 
 var colsOption3 = [
-	{id : "idClase", header : " ", width :1},
-	{id : "idGrupo" , header: "Grupo" , width :50, editor:{type:"text"}},
+	{id : "idGrupo" , header: "idGrupo" , width :150, editor:{type:"text"}},
 	{id : "Fecha" , header: "Fecha" , width :80, editor:{type:"text"}},
-	{id : "ActividadesRealizadas" , header: "Actividades Realizadas" , width: 150, editor:{type:"text"}},
-	{id : "TipoDeberes" , header: "Tipo Deberes" , width :80,  editor : { type :"select" ,options : {'Otros': 'Otros' ,'Listening':'Listening', 'Writing':'Writing', 'Speaking': 'Speaking', 'Reading': 'Reading'} ,defaultText : 'Otros'}},
-	{id : "DescripcionDeberes" , header: "Descripcion Deberes" , width :280, editor : {type :"textarea", width:'200px',height:'100px'}},
-	{id : "Observaciones" , header: "Incidencias/Castigos" , width :250, editor:{type:"text"}}
+	{id : "DescripcionDeberes" , header: "Descripcion Deberes" , width :800, editor : {type :"textarea", width:'200px',height:'100px',
+		validator : function(value,record,colObj,grid){ 
+			if (value.length>500) alert("Texto muy largo, cortelo un poco");
+		}
+	}}
 ];
 
 var gridOption3={
@@ -288,14 +331,21 @@ Sigma.Util.onLoad(Sigma.Grid.render(mygrid3));
 <script type="text/javascript">
 <!--
 function MM_jumpMenu(targ,selObj,restore){ //v3.0
-  eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
-  if (restore) selObj.selectedIndex=0;
+	eval(targ+".location='"+selObj.options[selObj.selectedIndex].value+"'");
+	if (restore) selObj.selectedIndex=0;
 }
 //-->
 </script>
 </head>
 
 <body>
+	<div id="modalBoxes">
+		<div id="mask"></div>
+		<div id="dialog" class="window">
+			<p>Grabando datos espere...</p>
+			<center><img src="../Imagenes/loading.gif" width="60px" height="60px"></center>
+		</div>
+	</div>
   <table width="100%" border="0">
     <tr>
       <td width="140"><img src="../Imagenes/logo_blanco.png" alt="Logo EnglishConnection" width="111" height="49" /></td>
@@ -313,7 +363,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 							$miconexion_Centro = new DB_mysql;
 							$miconexion_Centro->conectar();
 							echo "<select name='cmbCentros' id='cmbCentros' onchange=\"MM_jumpMenu('parent',this,0)\" tabindex='0'>\n";
-							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY Codigo ASC";
+							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY NombreCentro ASC";
 							$miconexion_Centro->consulta($sql);
 							while ($row =mysql_fetch_array($miconexion_Centro->Consulta_ID)) {
 								echo "<option value='../CambioCentroAdmin.php?Centro=".$row['Codigo']."' id='formulario'";
@@ -329,8 +379,11 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 ?>
             <b>Curso:</b>&nbsp;
 						<select name='cmbCursoEscolar' id='cmbCursoEscolar' onchange="MM_jumpMenu('parent',this,0)" tabindex='1'>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Actual' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso Actual</option>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Proximo' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso Proximo</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=1' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso 1</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=2' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso 2</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=3' id='formulario' <?php if ($_SESSION['CursoEscolar']=="3"){ echo " selected"; } ?> >Curso 3</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=4' id='formulario' <?php if ($_SESSION['CursoEscolar']=="4"){ echo " selected"; } ?> >Curso 4</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=5' id='formulario' <?php if ($_SESSION['CursoEscolar']=="5"){ echo " selected"; } ?> >Curso 5</option>
             </select>
           	</font>
           </div>
@@ -391,7 +444,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 		</ul>
 	</div>
 	<br />
-	<table width="100%" border="0" align="left">
+	<table border="0" align="left">
 		<tr>
    		<td width="130" align="left" valign="top">
 			<!-- InstanceBeginEditable name="SubMenu" -->
@@ -400,7 +453,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 	      	<p><a href="#" onclick="popup('../mnuGestionAcademica/Apoyo0.php', 800,620,'no')">Apoyos</a></p>
 	      	<p><a href="#" onclick="popup('../mnuGestionAcademica/.php', 800,430,'yes')">Utilidades y documentos</a></p>
 	      	<p><a href="#" onclick="popup('../mnuGestionAcademica/NotasTrimestrales0.php', 800,430,'yes')">Notas Trimestrales</a></p>
-	      	<p><a href="Test0.php" target="_blank">Test</a></p>
+
 			</div>
       <!-- InstanceEndEditable --></td>
 			<td width="5" bgcolor="#45AAFF">
@@ -409,7 +462,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
       </td>
       <td align="left" valign="top">
 			<!-- InstanceBeginEditable name="Resultados" -->
-			<table width="100%" border="0" bgcolor="#CCCCCC">
+			<table width="1000px" border="0" bgcolor="#CCCCCC">
         <tr>
           <td colspan="2" class="TituloPrincipal">
 						<div align="left" class="TituloPrincipal">
@@ -420,7 +473,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
           <td colspan="2">
           <form action="" method="get" name="form">
 						<select name="selGrupo" id="selGrupo" onchange="MM_jumpMenu('parent',this,0)">
-							<option>&nbsp;</option>
+							<option value="index.php">&nbsp;</option>
 <?php
 	$sql="SELECT * FROM gruposcuotas WHERE Centro='".$_SESSION['Centro']."' ORDER BY Grupo ASC";
 	$miconexion->consulta($sql);
@@ -436,38 +489,65 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 	$miconexion->consulta($sql);
 	$row =mysql_fetch_array($miconexion->Consulta_ID);
 ?>
-            <input name="txtFechaActual" type="text" id="txtFechaActual" value="<?php echo date('d-m-Y') ?>" size="15" maxlength="10" />
             <input name="txtProfesor" type="text" id="txtProfesor" value="<?php echo $row['Profesor'] ?>" size="15" maxlength="10" />
             &nbsp;&nbsp;&nbsp;
             <a href="#" onclick="popup('FaltasMasivas.php?Grupo=<?php echo $_GET['Grupo'] ?>&Fecha='+document.form.txtFechaActual.value , 500,200,'yes')"><strong>Fal. Masiva</strong></a>
             &nbsp;&nbsp;&nbsp;
             <a href="TotalFaltas.php" target="_blank"><strong>Total Faltas</strong></a> 
             &nbsp;&nbsp;&nbsp;
-          	<input name="txtFechaAnterior" type="text" id="txtFechaAnterior" value="<?php echo date('d-m-Y',time()-(60*60*24*10)) ?>" size="15" maxlength="10" />
         	</form>          </td>
         </tr>
         <tr>
           <td colspan="2">&nbsp;</td>
         </tr>
         <tr>
-          <td width="30%" align="left" valign="top"><div align="center"><strong>Alumno del Grupo:</strong></div></td>
-          <td width="70%" align="left" valign="top"><div align="center"><strong>Faltas del Alumno:
-            
-          </strong></div></td>
+			<td align="left" valign="top" width="500px">
+				<div align="center" style="width:500px;float: left;margin:0"><strong>Alumno del Grupo:</strong></div>
+				<div align="center" style="width:500px;float: right;margin:0"><strong>Faltas del Alumno:</strong></div>
+			</td>
         </tr>
         <tr>
-          <td width="40%" align="left" valign="top">
-          	<div id="gridbox" style="border:0px solid #cccccc;background-color:#f3f3f3;padding:5px;height:200px;width:100%;" ></div>          </td>
-          <td width="60%" align="left" valign="top">
-						<div id="gridbox2" style="border:0px solid #cccccc;background-color:#f3f3f3;padding:5px;height:200px;width:100%;" ></div>          </td>
+			<td align="left" valign="top" height="220px" width="500px">
+       			<div id="gridbox" style="float: left;border:0px;padding:5px;height:200px;width:500px;margin: 0;" ></div>
+
+				<div id="divFaltas" style="float: right;background-color: #ffffff;width: 500px;background-color: #ffffff;height: 180px; padding: 10px; margin-right: 15px; margin-top:5px" >
+					<center><h3 id="NumFaltas"><font>&nbsp;</font></h3></center>
+					<table>
+						<tr>
+							<td><b>Alumno:</b></td>
+							<td><input type="text" id="txtAlumnoFalta" size="20" readonly></td>
+							<td><b>Codigo:</b></td>
+							<td><input type="text" id="txtCodAlumnoFalta" size="8" readonly></td>
+						</tr>
+						<tr>
+							<td><b>Fecha:</b></td>
+							<td><input type="text" id="txtFechaFalta" size="20" readonly></td>	
+							<td><b>Justificada:</b></td>
+							<td>
+								<select id="selJustificada" style="width: 130px">
+									<option value="NO" selected>No</option>
+									<option value="YES">Sí</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="4">
+								<p align="center"><button id="btnGuardarFalta">Grabar Falta</button></p>
+							</td>
+						</tr>
+					</table>
+				</div>
+			</td>
         </tr>
         <tr>
-          <td colspan="2">
-						<div align="center"><strong>Deberes del Grupo:					</strong></div></td>
+			<td>
+				<div align="center"><strong>Deberes del Grupo:</strong></div>
+			</td>
         </tr>
         <tr>
-          <td colspan="2">
-              <div id="gridbox3" style="border:0px solid #cccccc;background-color:#f3f3f3;padding:5px;height:200px;width:100%;" ></div>          </td>
+          <td>
+             <div id="gridbox3" style="border:0px;padding:5px;height:200px;width:1055px;" ></div>
+          </td>
         </tr>
       </table>
 			<!-- InstanceEndEditable --></td>

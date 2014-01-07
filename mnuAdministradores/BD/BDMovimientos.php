@@ -5,6 +5,27 @@ mysql_connect("localhost","root","pedroman") or die("Could not connect: " . mysq
 mysql_select_db("gestoracademia".$_SESSION['CursoEscolar']) or die("Could not select database: " . mysql_error());
 mysql_query ("SET NAMES 'utf8'");
 $json=json_decode(stripslashes($_POST["_gt_json"]));
+require ("../../Connections/funciones.php");
+//This is sigma grid exporting handler 
+require_once('../../grid/GridServerHandler.php');
+$type = getParameter('exportType');
+
+if ( $type == 'xls' ){
+	$sql = "SELECT * FROM Movimientos WHERE Centro='".$_SESSION['SQL']."'";
+	$handle = mysql_query($sql);    
+	$salida_cvs='"id. Movimiento", "id. Cuenta", "id. Tipo", "Fecha", "Descripcion", "Haber", "Debe", "Centro"'."\n";
+	while ($row = mysql_fetch_object($handle)) {
+		$salida_cvs=$salida_cvs.'"'.$row->idMovi.'", "'.$row->idCuenta.'", "'.$row->idTipo.'", "'.cambiarfecha($row->Fecha).'", "'.$row->Descripcion.'", "'.str_replace(".", ",", $row->Haber).'", "'.str_replace(".", ",", $row->Debe).'", "'.$row->Centro.'"'."\n";
+	}
+	//Adapta la BBDD que esta en UTF-8 a Windows ISO-8859
+	$salida_cvs=iconv ( "UTF-8", "ISO-8859-1", $salida_cvs);
+
+	//Exporta el fichero resultado
+	header("Content-type: application/vnd.ms-excel");
+	header("Content-disposition: filename=MovimientosCuentas.csv");
+	print $salida_cvs;
+	exit;
+}
 
 if($json->{'action'} == 'load'){
 	//pageno starts with 1 instead of 0

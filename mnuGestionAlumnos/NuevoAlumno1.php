@@ -56,12 +56,11 @@
 			}else{
 				$Dto='NO';
 			}
-			$sql="INSERT INTO Alumnos (Codi, Reserva, Fecha_Al, Fecha_Co, Fecha_Ba, Nombre_Alumno, Direccion, Ciudad, Codigo_Postal, Telefono, Movil, Pago, Grupo, Materiales, Descuento, Motivo_Dto, Procedencia, Profesion_Estudios, Necesidad, Edad, IDColegio, Correo, Cambios, Observaciones, Centro) ";
+			$sql="INSERT INTO alumnos (Codi, Reserva, Fecha_Al, Fecha_Co, Fecha_Ba, Nombre_Alumno, Direccion, Ciudad, Codigo_Postal, Telefono, Movil, Pago, Grupo, Materiales, Descuento, Motivo_Dto, Procedencia, Profesion_Estudios, Necesidad, Edad, IDColegio, Correo, Cambios, Observaciones, Centro) ";
 			$sql=$sql."VALUES ('".$_POST['txtCentro'].$_POST['Codigo']."', '".$_POST['Reserva']."', '".cambiarfecha($_POST['FecAlta'])."', '".cambiarfecha($_POST['FecCom'])."', '".cambiarfecha($_POST['FecBaja'])."', '".$_POST['NomAlumno']."', '".$_POST['Direccion']."', '".$_POST['Ciudad']."', '".$_POST['CP']."', '".$_POST['Tlf']."', '".$_POST['Movil']."', '".$_POST['Pago']."', '".$_POST['Grupo']."', '".$Material."', '".$Dto."', '".$_POST['MotivoDto']."', '".$_POST['Procedencia']."', '".$_POST['Profesion']."', '".$_POST['Necesidad']."', '".$_POST['Ano']."', '".$_POST['IDColegio']."', '".$_POST['Correo']."', '".$_POST['Cambios']."', '".$_POST['Observaciones']."', '".$_POST['txtCentro']."')";
 			$miconexion->consulta($sql);
 			if (!empty($miconexion->$Error)){
 				echo $miconexion->Error."<br />";
-				echo $sql;
 			}
 			else {
 				echo "<br /><br /><br />\n";

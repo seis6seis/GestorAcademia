@@ -4,18 +4,27 @@
 	$login=new login();
 	$login->inicia();
 	require ("../Connections/DB_mysql.class.php");
-	if ($_GET['IDCuenta']==""){
-		$_SESSION['SQL']=" WHERE Centro='".$_SESSION['Centro']."'";
-	}
-	else{
-		$_SESSION['SQL']=" WHERE Centro='".$_SESSION['Centro']."' AND idCuenta='".$_GET['IDCuenta']."'";
-	}
+	require ("../Connections/funciones.php");
+	if ($_GET['fechaInicio']=="")
+		$FechaInicio=date("Y-m-d", strtotime("-1 year"));
+	else
+		$FechaInicio=$_GET['fechaInicio'];
+
+	if ($_GET['fechaFin']=="") 
+		$FechaFin=date("Y-m-d");
+	else
+		$FechaFin=$_GET['fechaFin'];
+
+	if ($_GET['IDCuenta']=="")
+		$_SESSION['SQL']=" WHERE Centro='".$_SESSION['Centro']."' AND Fecha BETWEEN '".$FechaInicio."' AND '".$FechaFin."'";
+	else
+		$_SESSION['SQL']=" WHERE Centro='".$_SESSION['Centro']."' AND idCuenta='".$_GET['IDCuenta']."' AND Fecha BETWEEN '".$FechaInicio."' AND '".$FechaFin."'";
 
 	$miconexion = new DB_mysql ;
 	$miconexion->conectar();
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><!-- InstanceBegin template="/Templates/Plantilla.dwt.php" codeOutsideHTMLIsLocked="false" -->
+<!doctype html>
+<html lang="es">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Content-Language" content="Spain" />
@@ -30,6 +39,7 @@
 <!-- InstanceBeginEditable name="head" -->
 <link rel="stylesheet" type="text/css" href="../grid/gt_grid.css" />  
 <link rel="stylesheet" type="text/css" href="../grid/gt_grid_height.css" />
+<script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="../grid/gt_msg_sp.js"></script>
 <script type="text/javascript" src="../grid/gt_const.js"></script>
 <script type="text/javascript" src="../grid/gt_grid_all.js"></script>
@@ -37,7 +47,61 @@
 <script type="text/javascript" src="../grid/calendar/calendar.js"></script>
 <script type="text/javascript" src="../grid/calendar/calendar-setup.js"></script>
 
+<!-- Quitar cuando HTML5 este al 100% -->
+<link rel="stylesheet" href="//code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="../lib/jquery-ui.js"></script>
 <script type="text/javascript">
+	$(function(){
+		$.datepicker.regional['es'] = {
+			closeText: 'Cerrar',
+			prevText: '<Ant',
+			nextText: 'Sig>',
+			currentText: 'Hoy',
+			monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+			monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+			dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+			dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+			dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+			weekHeader: 'Sm',
+			dateFormat: 'dd-mm-yy',
+			firstDay: 1,
+			isRTL: false,
+			showMonthAfterYear: false,
+			yearSuffix: ''
+		};
+		$.datepicker.setDefaults($.datepicker.regional['es']);
+		$('#fechaInicio').datepicker({
+			showButtonPanel: true,
+			onSelect: function (date) {
+				var fechaI=date.split("-").reverse().join("-");
+				var fechaF=$("#fechaFin").val();
+				fechaF=fechaF.split("-").reverse().join("-");
+				window.location = "index.php?IDCuenta="+$("#lstIDCuenta").val()+"&fechaInicio="+fechaI+"&fechaFin="+fechaF;
+			}
+		});
+		$('#fechaFin').datepicker({
+			showButtonPanel: true,
+			onSelect: function (date) {
+				var fechaI=$("#fechaInicio").val();
+				fechaI=fechaI.split("-").reverse().join("-");
+				var fechaF=date.split("-").reverse().join("-");
+				window.location = "index.php?IDCuenta="+$("#lstIDCuenta").val()+"&fechaInicio="+fechaI+"&fechaFin="+fechaF;
+			}
+		});
+	});
+</script>
+<!-- Quitar cuando HTML5 este al 100% -->
+
+<script type="text/javascript">
+	/*$(function(){
+		var f = new Date();
+		$("#fechaFin").val(f.getDate() + "-" + (f.getMonth() +1) + "-" + f.getFullYear());
+		milisegundos=parseInt(365*24*60*60*1000);
+		tiempo=f.getTime();
+		f.setTime(parseInt(tiempo-milisegundos));
+		$("#fechaInicio").val(f.getDate() + "-" + (f.getMonth() +1) + "-" + f.getFullYear());
+	});*/
+
 function ActualizarTotal(){
 	var TotalRegistros=mygrid.getPageInfo().endRowNum;
 	var Saldo=0;
@@ -144,11 +208,13 @@ var gridOption={
 	resizable : true,
 	loadURL : "BD/BDCuentas.php",
 	saveURL : "BD/BDCuentas.php",
+	exportURL : 'BD/BDCuentas.php?export=true',
+	exportFileName : 'MovimientosCuentas',
 	container : 'gridbox',
 	dataset : dsOption ,
 	columns : colsOption,
 	toolbarPosition : 'top',
-	toolbarContent : 'btnrefresh | btnadd <?php  if($_SESSION['Permiso']==1 or $_SESSION['Permiso']==4){ echo "btndel"; } ?> btnsave | filter | print',
+	toolbarContent : 'btnrefresh | btnadd <?php  if($_SESSION['Permiso']==1 or $_SESSION['Permiso']==4){ echo "btndel"; } ?> btnsave | filter | print xls',
 	pageSize : 50000,
 	onComplete:function(grid){
 		FiltroAutomatico=true;
@@ -171,7 +237,7 @@ Sigma.Util.onLoad(Sigma.Grid.render(mygrid));
  .clsEdit { 
 		background : url(../Imagenes/Iconos/form_edit.png) no-repeat center center; 
 		}
- .clsSave { 
+	.clsSave { 
 		background : url(../Imagenes/Iconos/grabar.png) no-repeat center center; 
 		}
 	.clsRefresh { 
@@ -180,16 +246,10 @@ Sigma.Util.onLoad(Sigma.Grid.render(mygrid));
 	.clsDelete{
 		background : url(../Imagenes/Iconos/form_delete.png) no-repeat center center; {
 		}
+	.inputText{
+		text-align:right;
+	}
 
-.gt-head-div {
-  height:20px;
-}
-.gt-inner {
-	height:18px;
-}
-.inputText{
-text-align:right;
-}
 -->
 </style>
 
@@ -222,7 +282,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 							$miconexion_Centro = new DB_mysql;
 							$miconexion_Centro->conectar();
 							echo "<select name='cmbCentros' id='cmbCentros' onchange=\"MM_jumpMenu('parent',this,0)\" tabindex='0'>\n";
-							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY Codigo ASC";
+							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY NombreCentro ASC";
 							$miconexion_Centro->consulta($sql);
 							while ($row =mysql_fetch_array($miconexion_Centro->Consulta_ID)) {
 								echo "<option value='../CambioCentroAdmin.php?Centro=".$row['Codigo']."' id='formulario'";
@@ -238,8 +298,11 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 ?>
             <b>Curso:</b>&nbsp;
 						<select name='cmbCursoEscolar' id='cmbCursoEscolar' onchange="MM_jumpMenu('parent',this,0)" tabindex='1'>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Actual' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso Actual</option>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Proximo' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso Proximo</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=1' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso 1</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=2' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso 2</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=3' id='formulario' <?php if ($_SESSION['CursoEscolar']=="3"){ echo " selected"; } ?> >Curso 3</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=4' id='formulario' <?php if ($_SESSION['CursoEscolar']=="4"){ echo " selected"; } ?> >Curso 4</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=5' id='formulario' <?php if ($_SESSION['CursoEscolar']=="5"){ echo " selected"; } ?> >Curso 5</option>
             </select>
           	</font>
           </div>
@@ -312,9 +375,9 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
         <p><a href="#" onclick="popup('PendientesCobro0.php',800,500,'no')">Pendientes de Cobro</a></p>
         <p><a href="#" onclick="popup('PendienteDatosBanco.php',800,500,'no')">Pendientes Datos Banco</a></p>
 <?php
-        if($_SESSION['NombrePermiso']=="Contable" or $_SESSION['NombrePermiso']=="Administrador"){
+/*        if($_SESSION['NombrePermiso']=="Contable" or $_SESSION['NombrePermiso']=="Administrador"){
 			echo'<p><a href="../mnuAdministradores/Test0.php" target="_blank">Editor Test</a></p>';
-		}
+		}*/
 ?>
 			</div>
       <!-- InstanceEndEditable --></td>
@@ -324,7 +387,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
       </td>
       <td align="left" valign="top">
 			<!-- InstanceBeginEditable name="Resultados" -->
-		<table width="100%" height="276" border="0">
+		<table width="100%" height="276" border="1">
         	<tr>
             <td height="21" align="left" valign="top" bgcolor="#CCCCCC"><span class="TituloPrincipal">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -334,7 +397,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
           <tr>
             <td height="31" align="left" valign="top" bgcolor="#CCCCCC"><table width="100%" border="0">
               <tr>
-                <td width="285%">
+                <td>
                 	<div align="left"><strong>
                     IDcuenta:                    </strong>
                	    <select name="lstIDCuenta" id="lstIDCuenta" onchange="MM_jumpMenu('parent',this,0)" tabindex="4">
@@ -343,13 +406,19 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 	$sql="SELECT IDCuenta,Descripcion FROM Cuentas WHERE Centro='".$_SESSION['Centro']."' ORDER BY IDCuenta ASC";
 	$miconexion->consulta($sql);
 	while ($row =mysql_fetch_array($miconexion->Consulta_ID)) {
-		echo "                  	<option value='index.php?IDCuenta=".$row['IDCuenta']."' id='formulario'";
+		echo "                  	<option value='index.php?IDCuenta=".$row['IDCuenta']."&fechaInicio=".$FechaInicio."&fechaFin=".$FechaFin."' id='formulario'";
 		if ($row['IDCuenta']==$_GET['IDCuenta']) echo "selected ";
 		echo " >".$row['Descripcion']."</option>\n";
 	}
 ?>
              	      </select>
-                	</div>                </td>
+						&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong>Entre la fecha</strong> 
+						<input type="date" size="5" id="fechaInicio" name="fechaInicio" placeholder="Fecha Inicio" value="<?php echo cambiarfecha($FechaInicio); ?>">
+						<strong> y</strong> 
+						<input type="date" size="5" id="fechaFin" name="fechaFin" placeholder="Fecha Fin" value="<?php echo cambiarfecha($FechaFin); ?>">
+                	</div>
+                </td>
               </tr>
             </table>
           </td>

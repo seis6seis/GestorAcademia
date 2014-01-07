@@ -1,71 +1,48 @@
 <?php
-	session_start();
+session_start();
 header('Content-type:text/javascript;charset=UTF-8');
 mysql_connect("localhost","root","pedroman") or die("Could not connect: " . mysql_error());
 mysql_select_db("gestoracademia".$_SESSION['CursoEscolar']) or die("Could not select database: " . mysql_error());
 mysql_query ("SET NAMES 'utf8'");
-	require ("../../Connections/funciones.php");
+require ("../../Connections/funciones.php");
 
-$json=json_decode(stripslashes($_POST["_gt_json"]));
-
-if($json->{'action'} == 'load'){
+if($_POST['action'] == 'TotalFaltas'){
 	//pageno starts with 1 instead of 0
-	$sql = "SELECT * FROM Faltas WHERE Centro='".$_SESSION['Centro']."' ORDER BY Fecha_Falta DESC";
-	$handle = mysql_query($sql);    
-	$retArray = array();
-	while ($row = mysql_fetch_object($handle)) {
-		$row->Fecha_Falta=cambiarfecha($row->Fecha_Falta);
-		$row->Fecha_Contacto=cambiarfecha($row->Fecha_Contacto);
-		$retArray[] = $row;
+	$sql = "SELECT Count(Fecha_Falta) as TotalFaltas FROM Faltas WHERE Codigo='".$_POST['Codigo']."' AND (Fecha_Falta BETWEEN '".date("Y-m-d", time()-(7*86400))."' AND '".date("Y-m-d")."') AND Centro='".$_SESSION['Centro']."';";
+	$handle = mysql_query($sql);
+
+	if(!$handle)
+		$return['Res'] = "ERROR: ".mysql_error();
+	else{
+		$row = mysql_fetch_object($handle);
+		$return['Res'] = "OK";
+		$return['Total']=$row->TotalFaltas;
+		$return['SQL']=$sql;
 	}
-	
-	$data = json_encode($retArray);
-	$ret = "{data:" . $data ."}";
-	echo $ret;
+
+	echo json_encode($return);
 }
-if($json->{'action'} == 'save'){
-  $sql = "";
-  $params = array();
-  $errors = "";
 
-  //deal with those deleted
-  $deletedRecords = $json->{'deletedRecords'};
-  foreach ($deletedRecords as $value){
-    $params[] = $value->idFalta;
-  }
-  $sql = "DELETE FROM Faltas WHERE idFalta IN (" . join(",", $params) . ")";
-  if(mysql_query($sql)==FALSE){
-    $errors .= mysql_error();
-  }
+if($_POST['action'] == 'save'){
+	$sql = "";
+	$sql = "SELECT Count(Fecha_Falta) as TotalFaltas FROM Faltas WHERE Codigo='".$_POST['CodAlumno']."' AND Fecha_Falta='".cambiarfecha($_POST['Fecha'])."';";
+	$handle = mysql_query($sql);
 
-  //deal with those updated
-  $sql = "";
-  $updatedRecords = $json->{'updatedRecords'};
-  foreach ($updatedRecords as $value){
-    $sql = "UPDATE Faltas SET ".
-      "Codigo='".$value->Codigo."', ".
-      "Fecha_Falta='".cambiarfecha($value->Fecha_Falta)."', ".
-      "Fecha_Contacto='".cambiarfecha($value->Fecha_Contacto)."', ".
-			"Justificada='".$value->Justificada."' ".
-      "WHERE idFalta='".$value->idFalta."'";
+	if(!$handle)
+		$return['Res'] = "ERROR: ".mysql_error();
+	else{
+		$row = mysql_fetch_object($handle);
+		if($row->TotalFaltas==0){
+			$sql = "INSERT INTO Faltas (Codigo, Fecha_Falta, Justificada, Centro) ";
+			$sql=$sql." VALUES ('". $_POST['CodAlumno']."', '".cambiarfecha($_POST['Fecha'])."', '".$_POST['Justificada']."', '".$_SESSION['Centro']."');";
 
-      if(mysql_query($sql)==FALSE){
-        $errors .= mysql_error();
-      }
-  }
-
-  //deal with those inserted
-  $sql = "";
-  $insertedRecords = $json->{'insertedRecords'};
-  foreach ($insertedRecords as $value){
-    $sql = "INSERT INTO Faltas (Codigo, Fecha_Falta, Fecha_Contacto, Justificada, Centro) ";
-		$sql=$sql." VALUES ('". $value->Codigo."', '".cambiarfecha($value->Fecha_Falta)."', '".cambiarfecha($value->Fecha_Contacto)."', 'NO', '".$_SESSION['Centro']."')";
-
-    if(mysql_query($sql)==FALSE){
-      $errors .= mysql_error();
-    }
-  }
-  $ret = "{success : true,exception:''}";
-	echo $ret;
+			if(!mysql_query($sql))
+				$return['Res'] = "ERROR: ".mysql_error();
+			else
+				$return['Res'] = "OK";
+		}else
+			$return['Res'] = "ERROR: Ya existe una falta asignada al día indicado.";
+	}
+	echo json_encode($return);
 }
 ?>

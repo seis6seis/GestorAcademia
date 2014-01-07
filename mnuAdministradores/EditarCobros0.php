@@ -82,11 +82,13 @@ var gridOption={
 	resizable : true,
 	loadURL : "BD/BDCobros.php",
 	saveURL : "BD/BDCobros.php",
+	exportURL : 'BD/BDCobros.php?export=true',
+	exportFileName : 'Cobros',
 	container : 'gridbox',
 	dataset : dsOption ,
 	columns : colsOption,
 	toolbarPosition : 'top',
-	toolbarContent : 'btnrefresh | btndel btnsave | filter | print',
+	toolbarContent : 'btnrefresh | btndel btnsave | filter | print xls',
 	pageSize : 50000
 };
 var mygrid=new Sigma.Grid(gridOption);

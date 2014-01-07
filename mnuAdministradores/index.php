@@ -53,7 +53,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 							$miconexion_Centro = new DB_mysql;
 							$miconexion_Centro->conectar();
 							echo "<select name='cmbCentros' id='cmbCentros' onchange=\"MM_jumpMenu('parent',this,0)\" tabindex='0'>\n";
-							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY Codigo ASC";
+							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY NombreCentro ASC";
 							$miconexion_Centro->consulta($sql);
 							while ($row =mysql_fetch_array($miconexion_Centro->Consulta_ID)) {
 								echo "<option value='../CambioCentroAdmin.php?Centro=".$row['Codigo']."' id='formulario'";
@@ -69,8 +69,11 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 ?>
             <b>Curso:</b>&nbsp;
 						<select name='cmbCursoEscolar' id='cmbCursoEscolar' onchange="MM_jumpMenu('parent',this,0)" tabindex='1'>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Actual' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso Actual</option>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Proximo' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso Proximo</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=1' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso 1</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=2' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso 2</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=3' id='formulario' <?php if ($_SESSION['CursoEscolar']=="3"){ echo " selected"; } ?> >Curso 3</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=4' id='formulario' <?php if ($_SESSION['CursoEscolar']=="4"){ echo " selected"; } ?> >Curso 4</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=5' id='formulario' <?php if ($_SESSION['CursoEscolar']=="5"){ echo " selected"; } ?> >Curso 5</option>
             </select>
           	</font>
           </div>
@@ -136,6 +139,8 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
    		<td width="130" align="left" valign="top">
 			<!-- InstanceBeginEditable name="SubMenu" -->
 				<div id='SubMenu' style="width:130px;">
+			<p><a href="ListaAlumnos.php" target="_blank">Listado de Alumnos</a></p>
+			<p><a href="EstadisticasAlumnos.php" target="_blank">Estadisticas de Alumnos</a></p>
           <p><a href="EditarCobros0.php" target="_blank">Editar Cobros</a></p>
           <p><a href="EditarMovimientos0.php" target="_blank">Editar Movimientos</a></p>
           <p><a href="Editor_Documentos0.php" target="_blank">Modificar Documentos</a></p>

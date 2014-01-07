@@ -51,7 +51,7 @@ var colsOption = [
 	{id : "Fecha" , header: "Fecha" , width :100,readonly:false},
 	{id : "ActividadesRealizadas" , header: "Actividades Realizadas" , width :150,readonly:false},
 	{id : "TipoDeberes" , header: "Tipo Deberes" , width :150,readonly:false},
-	{id : "DescripcionDeberes" , header: "Descripcion Deberes" , width :200,readonly:false}
+	{id : "DescripcionDeberes" , header: "Descripcion Deberes" ,readonly:false}
 ];
 
 var gridOption={
@@ -128,7 +128,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 							$miconexion_Centro = new DB_mysql;
 							$miconexion_Centro->conectar();
 							echo "<select name='cmbCentros' id='cmbCentros' onchange=\"MM_jumpMenu('parent',this,0)\" tabindex='0'>\n";
-							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY Codigo ASC";
+							$sql="SELECT Codigo, NombreCentro FROM centros ORDER BY NombreCentro ASC";
 							$miconexion_Centro->consulta($sql);
 							while ($row =mysql_fetch_array($miconexion_Centro->Consulta_ID)) {
 								echo "<option value='../CambioCentroAdmin.php?Centro=".$row['Codigo']."' id='formulario'";
@@ -144,8 +144,11 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 ?>
             <b>Curso:</b>&nbsp;
 						<select name='cmbCursoEscolar' id='cmbCursoEscolar' onchange="MM_jumpMenu('parent',this,0)" tabindex='1'>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Actual' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso Actual</option>
-            <option value='/GestorAcademia/CambioCurso.php?Curso=Proximo' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso Proximo</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=1' id='formulario' <?php if ($_SESSION['CursoEscolar']==""){ echo " selected"; } ?> >Curso 1</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=2' id='formulario' <?php if ($_SESSION['CursoEscolar']=="2"){ echo " selected"; } ?> >Curso 2</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=3' id='formulario' <?php if ($_SESSION['CursoEscolar']=="3"){ echo " selected"; } ?> >Curso 3</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=4' id='formulario' <?php if ($_SESSION['CursoEscolar']=="4"){ echo " selected"; } ?> >Curso 4</option>
+            <option value='/GestorAcademia/CambioCurso.php?Curso=5' id='formulario' <?php if ($_SESSION['CursoEscolar']=="5"){ echo " selected"; } ?> >Curso 5</option>
             </select>
           	</font>
           </div>
@@ -223,7 +226,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
   <tr>
 		<td height="21" align="left" valign="top" bgcolor="#CCCCCC"><span class="TituloPrincipal">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			Deberes</span>		</td>
+			Deberes Vacaciones</span>		</td>
 	</tr>
   <tr>
     <td>&nbsp;&nbsp;&nbsp;<strong>Grupo: </strong>&nbsp;
